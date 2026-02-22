@@ -316,6 +316,15 @@ DATA_DIR   = "mht_cet_data"
 USERS_FILE = os.path.join(DATA_DIR, "users.json")
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# ── Google OAuth constants (read from env; app works without them) ──
+GOOGLE_CLIENT_ID     = os.environ.get("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_REDIRECT_URI  = os.environ.get("GOOGLE_REDIRECT_URI", "")
+GOOGLE_AUTH_URL      = "https://accounts.google.com/o/oauth2/v2/auth"
+GOOGLE_TOKEN_URL     = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO_URL  = "https://www.googleapis.com/oauth2/v3/userinfo"
+
+
 # ── Password helpers ──
 def _hash_pw(password: str, salt: str) -> str:
     """PBKDF2-HMAC-SHA256 — much stronger than plain SHA-256."""
@@ -459,7 +468,7 @@ def google_exchange_code(code: str) -> dict:
         access_token = tokens.get("access_token","")
         if not access_token: return {}
         info_req = urllib.request.Request(
-            GOOGLE_INFO_URL,
+            GOOGLE_USERINFO_URL,
             headers={"Authorization": f"Bearer {access_token}"}
         )
         info = json.loads(urllib.request.urlopen(info_req, timeout=10).read())
