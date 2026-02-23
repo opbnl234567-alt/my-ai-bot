@@ -317,9 +317,20 @@ USERS_FILE = os.path.join(DATA_DIR, "users.json")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # ── Google OAuth constants (read from env; app works without them) ──
-GOOGLE_CLIENT_ID     = os.environ.get("GOOGLE_CLIENT_ID", "")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
-GOOGLE_REDIRECT_URI  = os.environ.get("GOOGLE_REDIRECT_URI", "")
+def _get_secret(key: str, default: str = "") -> str:
+    """Read from Streamlit secrets first, then env vars — works on Streamlit Cloud & locally."""
+    try:
+        import streamlit as _st
+        val = _st.secrets.get(key, "")
+        if val:
+            return str(val).strip()
+    except Exception:
+        pass
+    return os.environ.get(key, default).strip()
+
+GOOGLE_CLIENT_ID     = _get_secret("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = _get_secret("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI  = _get_secret("GOOGLE_REDIRECT_URI")
 GOOGLE_AUTH_URL      = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL     = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL  = "https://www.googleapis.com/oauth2/v3/userinfo"
@@ -951,7 +962,7 @@ code,pre { background:rgba(241,245,249,0.9) !important; color:var(--text) !impor
 # ─────────────────────────────────────────────────────────────────────────────
 @st.cache_resource
 def get_client():
-    key = os.environ.get("GROQ_API_KEY","")
+    key = _get_secret("GROQ_API_KEY")
     if not key: st.error("GROQ_API_KEY not set."); st.stop()
     return Groq(api_key=key)
 
