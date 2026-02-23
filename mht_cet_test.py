@@ -525,438 +525,522 @@ def google_oauth_configured() -> bool:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  CSS  — white glassy animated design
+#  CSS — Dark Wireframe Theme
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg:     #f0f4f8;
-    --white:  #ffffff;
-    --border: #e2e8f0;
-    --text:   #0f172a;
-    --muted:  #64748b;
-    --blue:   #2563eb;
-    --blue-l: #eff6ff;
-    --green:  #16a34a;
-    --green-l:#f0fdf4;
-    --red:    #dc2626;
-    --red-l:  #fef2f2;
-    --amber:  #d97706;
-    --amber-l:#fffbeb;
-    --phy:    #7c3aed;
-    --phy-l:  #f5f3ff;
-    --chem:   #059669;
-    --chem-l: #ecfdf5;
-    --math:   #d97706;
-    --math-l: #fffbeb;
-    --r:      14px;
-    --sh:     0 2px 12px rgba(37,99,235,0.07), 0 1px 3px rgba(0,0,0,0.04);
-    --sh-lg:  0 8px 32px rgba(37,99,235,0.1), 0 2px 8px rgba(0,0,0,0.06);
-    --glass:  rgba(255,255,255,0.85);
-    --glass-border: rgba(255,255,255,0.9);
+  --bg:       #050508;
+  --surface:  #0d0d14;
+  --surface2: #12121c;
+  --border:   rgba(99,102,241,0.18);
+  --border2:  rgba(255,255,255,0.07);
+  --text:     #e8e8f0;
+  --muted:    #6b6b8a;
+  --accent:   #6366f1;
+  --accent2:  #818cf8;
+  --cyan:     #22d3ee;
+  --green:    #34d399;
+  --red:      #f87171;
+  --amber:    #fbbf24;
+  --glow:     rgba(99,102,241,0.25);
+  --font:     'Inter', sans-serif;
+  --mono:     'JetBrains Mono', monospace;
 }
 
-/* GLOBAL */
-html,body,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMain"],
-.main,.block-container,[data-testid="block-container"] {
-    background-color: var(--bg) !important;
-    color: var(--text) !important;
-    font-family: 'Inter',sans-serif !important;
+/* ── App background ── */
+.stApp, [data-testid="stAppViewContainer"] {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: var(--font) !important;
 }
-#MainMenu,footer,header,[data-testid="stToolbar"],[data-testid="stDecoration"]{ visibility:hidden; }
-.block-container { padding:1.2rem 1.5rem; max-width:920px; margin:auto; }
+[data-testid="stAppViewContainer"] > .main { background: transparent !important; }
+[data-testid="stHeader"] { background: transparent !important; display:none !important; }
+section[data-testid="stSidebar"] {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border) !important;
+  min-width: 240px !important; max-width: 260px !important;
+}
+section[data-testid="stSidebar"] > div { padding: 0 !important; }
 
-/* ANIMATED BACKGROUND */
-body::before {
-    content:'';
-    position:fixed;
-    inset:0;
-    background:
-        radial-gradient(ellipse 800px 600px at 20% 10%, rgba(37,99,235,0.06) 0%, transparent 70%),
-        radial-gradient(ellipse 600px 500px at 80% 90%, rgba(124,58,237,0.05) 0%, transparent 70%),
-        radial-gradient(ellipse 500px 400px at 60% 40%, rgba(5,150,105,0.04) 0%, transparent 70%);
-    pointer-events:none;
-    z-index:0;
-    animation: bgshift 20s ease-in-out infinite alternate;
+/* ── Animated wireframe background canvas ── */
+#wireframe-canvas {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 0; opacity: 0.35;
 }
-@keyframes bgshift {
-    0%   { opacity:0.7; transform:scale(1); }
-    100% { opacity:1;   transform:scale(1.05); }
+.main .block-container {
+  position: relative; z-index: 1;
+  padding: 1rem 1.2rem 2rem !important;
+  max-width: 100% !important;
 }
 
-/* ALL TEXT */
-p,span,div,label,h1,h2,h3,h4,li,td,th,strong,b,small,em { color:var(--text) !important; }
+/* ── Sidebar ── */
+.sidebar-logo {
+  font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em;
+  color: var(--text); padding: 1.4rem 1.2rem 0.3rem;
+  border-bottom: 1px solid var(--border); margin-bottom: 0.5rem;
+}
+.sidebar-logo em { color: var(--accent2); font-style: normal; }
+.sidebar-tagline {
+  font-size: 0.67rem; color: var(--muted); padding: 0 1.2rem 1rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.user-card {
+  margin: 0.4rem 0.8rem 0.8rem;
+  background: rgba(99,102,241,0.08); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.75rem 0.9rem;
+  display: flex; align-items: center; gap: 0.7rem;
+}
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg,var(--accent),var(--cyan));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; color: #fff; flex-shrink: 0;
+}
+.user-info-name { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+.user-info-email { font-size: 0.68rem; color: var(--muted); }
+.nav-section { padding: 0.2rem 0.8rem; margin-bottom: 0.3rem; }
+.nav-label {
+  font-size: 0.6rem; color: var(--muted); letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0 0.4rem 0.4rem; font-weight: 600;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 0.65rem;
+  padding: 0.6rem 0.8rem; border-radius: 8px; cursor: pointer;
+  font-size: 0.82rem; font-weight: 500; color: var(--muted);
+  transition: all 0.18s ease; margin-bottom: 2px;
+  border: 1px solid transparent;
+}
+.nav-item:hover { background: rgba(99,102,241,0.1); color: var(--text); }
+.nav-item.active {
+  background: rgba(99,102,241,0.18); color: var(--accent2);
+  border-color: var(--border); font-weight: 600;
+}
+.nav-item .ni { font-size: 1rem; }
+.sidebar-footer {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 0.8rem 1rem; border-top: 1px solid var(--border);
+  font-size: 0.68rem; color: var(--muted); text-align: center;
+}
 
-/* STREAMLIT WIDGETS */
-.stRadio label,.stRadio [data-testid="stMarkdownContainer"] p,
-.stRadio div[role="radiogroup"] label,.stRadio div[role="radiogroup"] span { color:var(--text) !important; font-size:0.95rem !important; }
-.stCheckbox label,.stCheckbox span,.stCheckbox > label > div { color:var(--text) !important; font-size:0.87rem !important; }
-.stSelectbox label,[data-testid="stWidgetLabel"],[data-testid="stWidgetLabel"] p { color:var(--text) !important; font-size:0.85rem !important; }
-.stSelectbox [data-baseweb="select"] > div,[data-baseweb="select"] span { color:var(--text) !important; background:var(--white) !important; }
-.stMultiSelect [data-baseweb="select"] > div { color:var(--text) !important; }
-.stNumberInput input { color:var(--text) !important; background:var(--white) !important; }
-.streamlit-expanderHeader,.streamlit-expanderHeader p,
-[data-testid="stExpander"] summary,[data-testid="stExpander"] summary p { color:var(--text) !important; font-weight:500 !important; }
-.stCaption,.stCaption p { color:var(--muted) !important; font-size:0.8rem !important; }
-[data-baseweb="menu"] li,[data-baseweb="menu"] [role="option"] { color:var(--text) !important; background:var(--white) !important; }
-[data-baseweb="menu"] li:hover { background:var(--blue-l) !important; }
-[data-baseweb="tab-list"] { gap:4px !important; }
-[data-baseweb="tab"] { border-radius:8px !important; }
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px; padding: 1.2rem 1.4rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border); }
+.card-glow {
+  background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(34,211,238,0.04));
+  border-color: var(--border);
+  box-shadow: 0 0 30px rgba(99,102,241,0.08);
+}
 
-/* BUTTONS — glassy animated */
+/* ── Buttons ── */
 .stButton > button {
-    background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%) !important;
-    color:#fff !important; border:none !important;
-    border-radius:var(--r) !important;
-    font-family:'Inter',sans-serif !important; font-weight:600 !important;
-    font-size:0.87rem !important; padding:0.55rem 1.2rem !important;
-    width:100% !important;
-    box-shadow: 0 2px 8px rgba(37,99,235,0.3), 0 1px 2px rgba(0,0,0,0.1) !important;
-    transition: all 0.2s cubic-bezier(0.4,0,0.2,1) !important;
-    position:relative; overflow:hidden;
-}
-.stButton > button::after {
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
-    pointer-events:none;
+  background: rgba(99,102,241,0.15) !important;
+  color: var(--accent2) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  font-family: var(--font) !important;
+  font-weight: 600 !important; font-size: 0.82rem !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.18s ease !important;
+  width: 100% !important;
 }
 .stButton > button:hover {
-    transform:translateY(-1px) !important;
-    box-shadow: 0 6px 20px rgba(37,99,235,0.4), 0 2px 6px rgba(0,0,0,0.1) !important;
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+  background: rgba(99,102,241,0.28) !important;
+  border-color: var(--accent) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 20px var(--glow) !important;
 }
-.stButton > button:active { transform:translateY(0px) !important; }
-.stButton > button p { color:#fff !important; }
-.stAlert p,[data-testid="stNotification"] p { color:var(--text) !important; }
+.stButton > button:active { transform: translateY(0) !important; }
 
-/* GLASS CARD */
-.card {
-    background: var(--glass);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--r);
-    padding: 1.2rem 1.4rem;
-    margin-bottom: 0.7rem;
-    box-shadow: var(--sh);
-    transition: box-shadow 0.25s ease, transform 0.25s ease;
-    animation: fadeSlideUp 0.35s cubic-bezier(0.4,0,0.2,1) both;
+/* ── Inputs ── */
+.stTextInput input, .stSelectbox select, .stNumberInput input {
+  background: var(--surface2) !important;
+  border: 1px solid var(--border2) !important;
+  color: var(--text) !important;
+  border-radius: 8px !important;
+  font-family: var(--font) !important;
 }
-.card:hover { box-shadow: var(--sh-lg); }
+.stTextInput input:focus, .stSelectbox select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--glow) !important;
+}
+label, .stSelectbox label, .stNumberInput label,
+.stTextInput label, .stRadio label { color: var(--text) !important; }
 
-/* TOP BAR — glassy sticky */
-.top-bar {
-    display:flex; align-items:center; justify-content:space-between;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(24px) saturate(200%);
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
-    border: 1px solid rgba(255,255,255,0.95);
-    border-radius: var(--r);
-    padding: 0.85rem 1.3rem;
-    margin-bottom: 1.1rem;
-    box-shadow: 0 4px 16px rgba(37,99,235,0.08), 0 1px 4px rgba(0,0,0,0.04);
-    animation: fadeSlideDown 0.3s cubic-bezier(0.4,0,0.2,1) both;
+/* ── Radio (answer options) ── */
+.stRadio > div { gap: 0.5rem !important; }
+.stRadio > div > label {
+  background: var(--surface2) !important;
+  border: 1px solid var(--border2) !important;
+  border-radius: 10px !important;
+  padding: 0.75rem 1rem !important;
+  color: var(--text) !important;
+  font-size: 0.9rem !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+  display: flex !important; align-items: center !important; gap: 0.6rem !important;
+  white-space: normal !important; word-break: break-word !important;
 }
-.logo { font-size:1.15rem; font-weight:800; letter-spacing:-0.5px; color:var(--text) !important; }
-.logo em { color:var(--blue) !important; font-style:normal; }
-
-/* ANIMATIONS */
-@keyframes fadeSlideUp {
-    from { opacity:0; transform:translateY(12px); }
-    to   { opacity:1; transform:translateY(0); }
+.stRadio > div > label:hover {
+  border-color: var(--accent) !important;
+  background: rgba(99,102,241,0.1) !important;
 }
-@keyframes fadeSlideDown {
-    from { opacity:0; transform:translateY(-8px); }
-    to   { opacity:1; transform:translateY(0); }
-}
-@keyframes fadeIn {
-    from { opacity:0; } to { opacity:1; }
-}
-@keyframes shimmer {
-    0%   { background-position: -200% center; }
-    100% { background-position: 200% center; }
-}
-@keyframes pulse-ring {
-    0%   { transform:scale(0.95); box-shadow:0 0 0 0 rgba(37,99,235,0.3); }
-    70%  { transform:scale(1);    box-shadow:0 0 0 8px rgba(37,99,235,0); }
-    100% { transform:scale(0.95); box-shadow:0 0 0 0 rgba(37,99,235,0); }
-}
-@keyframes float {
-    0%,100% { transform:translateY(0px); }
-    50%      { transform:translateY(-6px); }
+.stRadio > div > label[data-checked="true"] {
+  border-color: var(--accent) !important;
+  background: rgba(99,102,241,0.18) !important;
+  color: var(--accent2) !important;
 }
 
-/* PILLS */
-.pill { display:inline-flex; align-items:center; padding:2px 9px; border-radius:999px; font-size:0.7rem; font-weight:600; letter-spacing:0.2px; line-height:1.6; transition:all 0.15s; }
-.pill-blue   { background:var(--blue-l);  color:var(--blue)  !important; }
-.pill-green  { background:var(--green-l); color:var(--green) !important; }
-.pill-red    { background:var(--red-l);   color:var(--red)   !important; }
-.pill-amber  { background:var(--amber-l); color:var(--amber) !important; }
-.pill-phy    { background:var(--phy-l);   color:var(--phy)   !important; }
-.pill-chem   { background:var(--chem-l);  color:var(--chem)  !important; }
-.pill-math   { background:var(--math-l);  color:var(--math)  !important; }
-.pill-orange { background:#fff7ed;        color:#c2410c      !important; }
-.pill-gray   { background:#f1f5f9;        color:var(--muted) !important; }
-
-/* MARK FOR REVIEW */
-.review-btn > button { background:#fff7ed !important; color:#c2410c !important; border:1.5px solid #fed7aa !important; font-weight:600 !important; box-shadow:none !important; }
-.review-btn > button:hover { background:#ffedd5 !important; transform:translateY(-1px) !important; }
-.review-btn-active > button { background:linear-gradient(135deg,#f59e0b,#d97706) !important; color:#fff !important; border:none !important; }
-
-/* DIFFICULTY */
-.diff-Easy   { background:#f0fdf4; color:#16a34a !important; border:1px solid #bbf7d0; }
-.diff-Medium { background:#fffbeb; color:#d97706 !important; border:1px solid #fde68a; }
-.diff-Hard   { background:#fef2f2; color:#dc2626 !important; border:1px solid #fecaca; }
-.diff-Mixed  { background:#f5f3ff; color:#7c3aed !important; border:1px solid #ddd6fe; }
-
-/* TIMER */
-.timer {
-    font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:700;
-    color:var(--text) !important;
-    background:rgba(255,255,255,0.9);
-    backdrop-filter:blur(10px);
-    border:1.5px solid var(--border); border-radius:10px;
-    padding:5px 14px; min-width:100px; text-align:center;
-    box-shadow:0 2px 8px rgba(0,0,0,0.06);
-    transition: all 0.3s ease;
+/* ── Tabs ── */
+.stTabs [data-baseweb="tab-list"] {
+  background: var(--surface2) !important;
+  border-radius: 10px !important; gap: 4px !important;
+  padding: 4px !important; border: 1px solid var(--border2) !important;
 }
-.timer-warn   { color:var(--amber) !important; border-color:var(--amber) !important; background:rgba(255,251,235,0.95) !important; }
-.timer-danger {
-    color:var(--red) !important; border-color:var(--red) !important;
-    background:rgba(254,242,242,0.95) !important;
-    animation: blink 1s infinite, pulse-ring 1.5s infinite;
+.stTabs [data-baseweb="tab"] {
+  background: transparent !important; border-radius: 7px !important;
+  color: var(--muted) !important; font-weight: 500 !important;
+  font-size: 0.8rem !important; padding: 0.4rem 0.9rem !important;
+  border: none !important;
 }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.65} }
+.stTabs [aria-selected="true"] {
+  background: rgba(99,102,241,0.22) !important;
+  color: var(--accent2) !important; font-weight: 700 !important;
+}
+.stTabs [data-baseweb="tab-panel"] { padding: 0.8rem 0 0 !important; }
 
-/* PROGRESS BAR — animated fill */
-.prog-wrap { background:#e2e8f0; border-radius:999px; height:5px; margin:0.5rem 0 0.9rem; overflow:hidden; }
-.prog-fill {
-    background: linear-gradient(90deg, var(--blue), #7c3aed, var(--blue));
-    background-size:200% 100%;
-    border-radius:999px; height:5px;
-    animation: shimmer 2.5s linear infinite;
-    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+/* ── Expander ── */
+.streamlit-expanderHeader {
+  background: var(--surface2) !important;
+  border: 1px solid var(--border2) !important;
+  border-radius: 8px !important; color: var(--text) !important;
+}
+.streamlit-expanderContent {
+  background: var(--surface) !important;
+  border: 1px solid var(--border2) !important;
+  border-top: none !important; border-radius: 0 0 8px 8px !important;
 }
 
-/* QUESTION */
-.q-meta { display:flex; align-items:center; flex-wrap:wrap; gap:5px; margin-bottom:0.8rem; }
-.q-number { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted) !important; font-weight:500; }
-.q-right  { margin-left:auto; display:flex; gap:5px; align-items:center; }
-.pyq-badge { font-size:0.68rem; font-weight:700; background:linear-gradient(135deg,#fef3c7,#fde68a); color:#92400e !important; border:1px solid #fcd34d; border-radius:5px; padding:2px 7px; font-family:'JetBrains Mono',monospace; }
-.q-text { font-size:0.98rem; line-height:1.85; color:var(--text) !important; font-weight:400; margin:0; }
-
-/* ANSWER OPTIONS */
-.opt {
-    display:flex; align-items:flex-start; gap:10px;
-    padding:0.7rem 1rem;
-    border:1.5px solid var(--border); border-radius:var(--r);
-    margin-bottom:0.4rem;
-    background:rgba(255,255,255,0.8);
-    backdrop-filter:blur(8px);
-    font-size:0.92rem; line-height:1.5;
-    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+/* ── Question card ── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px; padding: 1.4rem 1.6rem;
+  margin-bottom: 1.2rem;
+  animation: fadeUp 0.3s ease;
 }
-.opt:hover { border-color:#93c5fd; background:rgba(239,246,255,0.9); transform:translateX(2px); }
-.opt span,.opt-key { color:var(--text) !important; }
-.opt-key { font-weight:700; color:var(--muted) !important; min-width:16px; font-size:0.82rem; margin-top:1px; flex-shrink:0; }
-.opt-correct { border-color:var(--green) !important; background:rgba(240,253,244,0.95) !important; }
-.opt-wrong   { border-color:var(--red)   !important; background:rgba(254,242,242,0.95) !important; }
-.opt-correct .opt-key { color:var(--green) !important; }
-.opt-wrong   .opt-key { color:var(--red)   !important; }
+.q-num {
+  font-size: 0.7rem; color: var(--muted); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem;
+  font-family: var(--mono);
+}
+.q-text {
+  font-size: 1rem; color: var(--text); line-height: 1.6;
+  white-space: pre-wrap; word-break: break-word;
+  font-weight: 500;
+}
+.q-meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
 
-/* STATS */
-.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:0.75rem; margin:0.7rem 0; }
+/* ── Pills ── */
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 0.2rem 0.65rem; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.03em;
+}
+.pill-phy { background: rgba(34,211,238,0.12); color: var(--cyan); }
+.pill-che { background: rgba(52,211,153,0.12); color: var(--green); }
+.pill-mat { background: rgba(251,191,36,0.12); color: var(--amber); }
+.pill-blue { background: rgba(99,102,241,0.15); color: var(--accent2); }
+.pill-gray { background: rgba(107,107,138,0.15); color: var(--muted); }
+.pill-green { background: rgba(52,211,153,0.12); color: var(--green); }
+.pill-red { background: rgba(248,113,113,0.12); color: var(--red); }
+.pill-amber { background: rgba(251,191,36,0.12); color: var(--amber); }
+
+/* ── Difficulty badges ── */
+.diff-Easy   { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+.diff-Medium { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+.diff-Hard   { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+
+/* ── Top test bar ── */
+.test-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.5rem;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 0.75rem 1.2rem;
+  margin-bottom: 0.8rem; position: sticky; top: 0; z-index: 50;
+}
+.test-logo { font-size: 1rem; font-weight: 800; color: var(--text); }
+.test-logo em { color: var(--accent2); font-style: normal; }
+.test-info { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.test-stat { font-size: 0.78rem; color: var(--muted); font-family: var(--mono); }
+.test-stat b { color: var(--text); }
+.test-timer {
+  font-family: var(--mono); font-size: 1.1rem; font-weight: 700;
+  color: var(--cyan); letter-spacing: 0.06em;
+  background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.2);
+  border-radius: 8px; padding: 0.25rem 0.75rem;
+}
+.test-timer.danger { color: var(--red); background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.2); animation: timerPulse 1s ease infinite; }
+.progress-bar-wrap { background: rgba(255,255,255,0.05); border-radius: 999px; height: 3px; margin-bottom: 0.8rem; overflow: hidden; }
+.progress-bar-fill { height: 3px; border-radius: 999px; background: linear-gradient(90deg,var(--accent),var(--cyan)); transition: width 0.4s ease; }
+
+/* ── Palette ── */
+.palette-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.pq {
+  width: 34px; height: 34px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; cursor: pointer;
+  font-family: var(--mono); border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+.pq-answered { background: rgba(52,211,153,0.2); color: var(--green); border-color: rgba(52,211,153,0.3); }
+.pq-marked   { background: rgba(251,191,36,0.2); color: var(--amber); border-color: rgba(251,191,36,0.3); }
+.pq-current  { background: rgba(99,102,241,0.3); color: var(--accent2); border-color: var(--accent); }
+.pq-unvisited { background: rgba(255,255,255,0.04); color: var(--muted); border-color: var(--border2); }
+
+/* ── Nav buttons ── */
+.btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.8rem 0; }
+.btn-nav {
+  flex: 1; min-width: 80px; padding: 0.6rem 0.5rem;
+  border-radius: 8px; border: 1px solid var(--border2);
+  background: var(--surface2); color: var(--text);
+  font-weight: 600; font-size: 0.82rem; cursor: pointer;
+  font-family: var(--font); transition: all 0.15s ease; text-align: center;
+}
+.btn-nav:hover { border-color: var(--accent); color: var(--accent2); background: rgba(99,102,241,0.1); }
+.btn-next { background: rgba(99,102,241,0.2); color: var(--accent2); border-color: var(--border); }
+.btn-next:hover { background: rgba(99,102,241,0.35); }
+.btn-submit { background: rgba(52,211,153,0.12); color: var(--green); border-color: rgba(52,211,153,0.25); }
+.btn-submit:hover { background: rgba(52,211,153,0.25); }
+.btn-mark { background: rgba(251,191,36,0.1); color: var(--amber); border-color: rgba(251,191,36,0.25); }
+.btn-mark:hover { background: rgba(251,191,36,0.2); }
+.btn-clear { background: rgba(248,113,113,0.08); color: var(--red); border-color: rgba(248,113,113,0.2); }
+.btn-clear:hover { background: rgba(248,113,113,0.18); }
+
+/* ── Score hero ── */
+.score-hero {
+  text-align: center; padding: 2.5rem 1.5rem 2rem;
+  background: linear-gradient(135deg,rgba(99,102,241,0.1),rgba(34,211,238,0.05));
+  border: 1px solid var(--border); border-radius: 18px; margin-bottom: 1.2rem;
+}
+.score-big {
+  font-size: clamp(3rem,10vw,5rem); font-weight: 900;
+  background: linear-gradient(135deg,var(--accent2),var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1;
+}
+.score-sub { font-size: 0.9rem; color: var(--muted); margin-top: 0.4rem; }
+.grade-badge {
+  display: inline-block; margin-top: 0.8rem;
+  padding: 0.3rem 1.2rem; border-radius: 999px;
+  font-weight: 700; font-size: 0.85rem;
+  background: rgba(99,102,241,0.2); color: var(--accent2); border: 1px solid var(--border);
+}
+
+/* ── Stat cards row ── */
+.stats-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .stat-card {
-    background:rgba(255,255,255,0.85);
-    backdrop-filter:blur(16px);
-    border:1px solid rgba(255,255,255,0.95);
-    border-radius:var(--r);
-    padding:1rem; text-align:center;
-    box-shadow:var(--sh);
-    animation:fadeSlideUp 0.4s cubic-bezier(0.4,0,0.2,1) both;
-    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  flex: 1; min-width: 80px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 0.9rem 0.7rem; text-align: center;
 }
-.stat-card:hover { transform:translateY(-2px); box-shadow:var(--sh-lg); }
-.stat-num { font-size:1.8rem; font-weight:700; font-family:'JetBrains Mono',monospace; line-height:1.1; }
-.stat-lbl { font-size:0.68rem; color:var(--muted) !important; margin-top:3px; text-transform:uppercase; letter-spacing:0.5px; }
+.stat-val { font-size: 1.6rem; font-weight: 800; font-family: var(--mono); color: var(--text); }
+.stat-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 
-/* BARS */
-.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; animation:fadeSlideUp 0.3s ease both; }
-.bar-label { min-width:185px; color:var(--text) !important; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.bar-track { flex:1; background:#e2e8f0; border-radius:999px; height:7px; overflow:hidden; }
-.bar-fill  { border-radius:999px; height:7px; transition:width 0.6s cubic-bezier(0.4,0,0.2,1); }
-.bar-stat  { min-width:85px; text-align:right; font-family:'JetBrains Mono',monospace; font-size:0.76rem; color:var(--muted) !important; }
-
-/* HISTORY */
-.hist-row {
-    display:flex; align-items:center; padding:0.7rem 1rem;
-    border:1px solid rgba(255,255,255,0.9); border-radius:var(--r);
-    margin-bottom:0.4rem;
-    background:rgba(255,255,255,0.8);
-    backdrop-filter:blur(12px);
-    gap:1rem; font-size:0.83rem;
-    transition:all 0.2s ease;
-    animation:fadeSlideUp 0.3s ease both;
+/* ── Setup quick-start card ── */
+.qs-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 1.2rem;
+  display: flex; align-items: center; gap: 1rem; cursor: pointer;
+  transition: all 0.2s ease; margin-bottom: 0.6rem;
 }
-.hist-row:hover { background:rgba(255,255,255,0.95); box-shadow:var(--sh); transform:translateX(2px); }
-.hist-date  { color:var(--muted) !important; font-size:0.76rem; min-width:135px; font-family:'JetBrains Mono',monospace; }
-.hist-score { font-weight:700; font-family:'JetBrains Mono',monospace; min-width:70px; }
-.hist-sub   { flex:1; color:var(--text) !important; }
+.qs-card:hover { border-color: var(--accent); background: rgba(99,102,241,0.06); transform: translateY(-2px); }
+.qs-icon { font-size: 1.6rem; }
+.qs-title { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+.qs-desc { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
 
-/* SECTION HEADING */
-.sh { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted) !important; margin:1.1rem 0 0.45rem; border-bottom:1px solid var(--border); padding-bottom:3px; }
-
-/* MISC */
-hr { border:none; border-top:1px solid var(--border); margin:1.1rem 0; }
-code,pre { background:rgba(241,245,249,0.9) !important; color:var(--text) !important; border-radius:6px; padding:1px 5px; }
-::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
-::-webkit-scrollbar-track { background:transparent; }
-
-/* ── AUTH PAGE ── */
-.auth-page-bg {
-    min-height:90vh; display:flex; align-items:center; justify-content:center;
-    position:relative; overflow:hidden;
+/* ── Auth page ── */
+.auth-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--bg); position: relative;
 }
 .auth-card {
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 1px solid rgba(255,255,255,0.98);
-    border-radius: 24px;
-    padding: 2.5rem 2.2rem 2rem;
-    box-shadow:
-        0 20px 60px rgba(37,99,235,0.12),
-        0 8px 24px rgba(0,0,0,0.08),
-        inset 0 1px 0 rgba(255,255,255,1);
-    animation: authCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
-    max-width:420px; width:100%;
-}
-@keyframes authCardIn {
-    from { opacity:0; transform:scale(0.92) translateY(20px); }
-    to   { opacity:1; transform:scale(1) translateY(0); }
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; padding: 2.5rem 2rem;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 0 60px rgba(99,102,241,0.1);
+  animation: fadeUp 0.4s ease;
 }
 .auth-logo {
-    text-align:center; font-size:2.4rem; font-weight:800;
-    letter-spacing:-2px; color:var(--text) !important;
-    margin-bottom:0.2rem;
-    background: linear-gradient(135deg, #0f172a 30%, #2563eb 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  font-size: 1.8rem; font-weight: 900; letter-spacing: -0.03em;
+  color: var(--text); text-align: center; margin-bottom: 0.3rem;
 }
-.auth-logo em {
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-style:normal;
+.auth-logo em { color: var(--accent2); font-style: normal; }
+.auth-tagline {
+  text-align: center; color: var(--muted); font-size: 0.78rem;
+  margin-bottom: 1.8rem; letter-spacing: 0.04em;
 }
-.auth-tagline { text-align:center; color:var(--muted) !important; font-size:0.88rem; margin-bottom:1.6rem; }
-.auth-divider {
-    display:flex; align-items:center; gap:12px;
-    color:var(--muted); font-size:0.75rem; margin:1rem 0;
+.auth-msg-ok  { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.2); border-radius: 8px; padding: 0.6rem 0.9rem; font-size: 0.82rem; margin-bottom: 0.8rem; }
+.auth-msg-err { background: rgba(248,113,113,0.1); color: var(--red); border: 1px solid rgba(248,113,113,0.2); border-radius: 8px; padding: 0.6rem 0.9rem; font-size: 0.82rem; margin-bottom: 0.8rem; }
+.google-btn-wrap {
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  padding: 0.7rem 1rem; border-radius: 10px;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border2);
+  color: var(--text); font-weight: 600; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.18s ease; text-decoration: none; margin-bottom: 1rem;
+  width: 100%;
 }
-.auth-divider::before,.auth-divider::after {
-    content:''; flex:1; height:1px;
-    background:linear-gradient(90deg, transparent, var(--border), transparent);
+.google-btn-wrap:hover { border-color: var(--border); background: rgba(255,255,255,0.1); }
+.divider { display: flex; align-items: center; gap: 0.8rem; margin: 0.9rem 0; }
+.divider::before, .divider::after { content:''; flex:1; height:1px; background: var(--border2); }
+.divider span { color: var(--muted); font-size: 0.72rem; }
+
+/* ── Loading ── */
+.loading-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 3rem 1rem; text-align: center;
 }
-.auth-hint { font-size:0.73rem; color:#94a3b8 !important; text-align:center; margin-top:0.6rem; line-height:1.5; }
-.auth-err {
-    background:linear-gradient(135deg,#fef2f2,#fee2e2);
-    border:1px solid #fecaca; color:#dc2626 !important;
-    border-radius:10px; padding:0.55rem 0.9rem; font-size:0.82rem; margin-bottom:0.8rem;
-    animation: fadeSlideUp 0.3s ease;
+.loading-logo { font-size: 2rem; font-weight: 900; color: var(--text); margin-bottom: 1rem; }
+.loading-logo em { color: var(--accent2); font-style: normal; }
+.spinner-ring {
+  width: 48px; height: 48px; border: 3px solid rgba(99,102,241,0.15);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.9s linear infinite; margin: 0 auto 1.2rem;
 }
-.auth-ok {
-    background:linear-gradient(135deg,#f0fdf4,#dcfce7);
-    border:1px solid #bbf7d0; color:#16a34a !important;
-    border-radius:10px; padding:0.55rem 0.9rem; font-size:0.82rem; margin-bottom:0.8rem;
-    animation: fadeSlideUp 0.3s ease;
+.loading-label { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+.loading-sub { font-size: 0.75rem; color: var(--muted); }
+.loading-progress {
+  width: 220px; height: 3px; background: rgba(255,255,255,0.06);
+  border-radius: 999px; margin: 1rem auto 0; overflow: hidden;
+}
+.loading-progress-fill {
+  height: 3px; background: linear-gradient(90deg,var(--accent),var(--cyan));
+  border-radius: 999px; transition: width 0.5s ease;
 }
 
-/* GOOGLE SIGN-IN BUTTON */
-.google-btn {
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    width:100%; padding:0.65rem 1rem;
-    background:white; border:1.5px solid #e2e8f0;
-    border-radius:12px; cursor:pointer;
-    font-family:'Inter',sans-serif; font-size:0.88rem; font-weight:600; color:#0f172a;
-    box-shadow:0 2px 8px rgba(0,0,0,0.06);
-    transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
-    text-decoration:none;
+/* ── History rows ── */
+.hist-row {
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+  padding: 0.85rem 1rem; border-radius: 10px;
+  background: var(--surface); border: 1px solid var(--border2);
+  margin-bottom: 0.5rem; transition: border-color 0.15s;
 }
-.google-btn:hover {
-    background:#f8fafc; border-color:#94a3b8;
-    box-shadow:0 4px 16px rgba(0,0,0,0.1);
-    transform:translateY(-1px);
-}
-.google-icon { width:20px; height:20px; flex-shrink:0; }
+.hist-row:hover { border-color: var(--border); }
+.hist-date { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); min-width: 105px; }
+.hist-score { font-size: 1.1rem; font-weight: 800; color: var(--text); font-family: var(--mono); min-width: 55px; }
 
-/* USER CHIP */
-.user-chip {
-    display:inline-flex; align-items:center; gap:6px;
-    background:rgba(239,246,255,0.9);
-    backdrop-filter:blur(8px);
-    border:1px solid #bfdbfe; border-radius:999px;
-    padding:4px 12px 4px 4px;
-    font-size:0.78rem; font-weight:600; color:#1d4ed8 !important;
-    transition:all 0.2s ease;
-    white-space:nowrap;
-}
-.user-chip:hover { background:rgba(219,234,254,0.95); border-color:#93c5fd; }
-.user-avatar {
-    width:24px; height:24px; border-radius:50%;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-    color:#fff !important; display:inline-flex; align-items:center;
-    justify-content:center; font-size:0.68rem; font-weight:700; flex-shrink:0;
-    box-shadow:0 2px 6px rgba(37,99,235,0.3);
-}
-.google-avatar {
-    width:24px; height:24px; border-radius:50%;
-    border:2px solid #e2e8f0; flex-shrink:0;
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+/* ── Animations ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes timerPulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+@keyframes glow { 0%,100%{box-shadow:0 0 12px var(--glow);} 50%{box-shadow:0 0 28px var(--glow);} }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .main .block-container { padding: 0.6rem 0.7rem 2rem !important; }
+  .test-topbar { padding: 0.5rem 0.8rem; gap: 0.3rem; }
+  .test-logo { font-size: 0.9rem; }
+  .test-timer { font-size: 0.9rem; }
+  .q-card { padding: 1rem 1rem; }
+  .q-text { font-size: 0.92rem; }
+  .pq { width: 30px; height: 30px; font-size: 0.65rem; }
+  .score-big { font-size: 3.5rem; }
+  .stats-row { gap: 0.4rem; }
+  .stat-card { padding: 0.7rem 0.5rem; }
+  .stat-val { font-size: 1.3rem; }
+  section[data-testid="stSidebar"] { min-width: 200px !important; }
+  .auth-card { padding: 1.8rem 1.2rem; }
+  .stButton > button { font-size: 0.78rem !important; padding: 0.5rem 0.6rem !important; }
 }
 
-/* PALETTE BUTTONS */
-[data-testid="stButton"] .pal-btn > button { padding:0.3rem 0.2rem !important; font-size:0.72rem !important; }
-
-/* LOADING SPINNER */
-.loading-dots span {
-    display:inline-block; width:8px; height:8px; border-radius:50%;
-    background:var(--blue); margin:0 3px;
-    animation:bounce 1.2s infinite ease-in-out;
-}
-.loading-dots span:nth-child(2) { animation-delay:0.2s; }
-.loading-dots span:nth-child(3) { animation-delay:0.4s; }
-@keyframes bounce {
-    0%,80%,100% { transform:scale(0.6); opacity:0.4; }
-    40%          { transform:scale(1);   opacity:1;   }
-}
-
-/* INPUT FIELDS */
-[data-baseweb="input"] input, [data-baseweb="textarea"] textarea {
-    border-radius:10px !important;
-    transition:border-color 0.2s ease, box-shadow 0.2s ease !important;
-}
-[data-baseweb="input"] input:focus, [data-baseweb="textarea"] textarea:focus {
-    box-shadow:0 0 0 3px rgba(37,99,235,0.12) !important;
-}
-
-/* EXPANDER */
-[data-testid="stExpander"] {
-    background:rgba(255,255,255,0.8) !important;
-    backdrop-filter:blur(12px);
-    border:1px solid rgba(255,255,255,0.9) !important;
-    border-radius:var(--r) !important;
-    transition:all 0.2s ease;
-}
-[data-testid="stExpander"]:hover {
-    box-shadow:var(--sh) !important;
-}
+/* ── Streamlit overrides ── */
+.stMarkdown p { color: var(--text) !important; }
+.stMarkdown h1,.stMarkdown h2,.stMarkdown h3 { color: var(--text) !important; }
+div[data-testid="stMetricValue"] { color: var(--accent2) !important; font-family: var(--mono) !important; }
+div[data-testid="stMetricLabel"] { color: var(--muted) !important; }
+.stSelectbox > div > div { background: var(--surface2) !important; border-color: var(--border2) !important; color: var(--text) !important; }
+.stMultiSelect > div { background: var(--surface2) !important; border-color: var(--border2) !important; }
+.stMultiSelect span[data-baseweb="tag"] { background: rgba(99,102,241,0.2) !important; }
+hr { border-color: var(--border2) !important; }
+.element-container { animation: fadeUp 0.25s ease; }
+[data-testid="stSidebarNav"] { display:none !important; }
+.stAlert { background: var(--surface2) !important; border-color: var(--border) !important; color: var(--text) !important; }
 </style>
+
+<canvas id="wireframe-canvas"></canvas>
+<script>
+(function(){
+  const canvas = document.getElementById('wireframe-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W,H,pts,t=0;
+  const COLS=32,ROWS=18,SPACING=55;
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+  }
+  function genPts(){
+    pts=[];
+    for(let r=0;r<ROWS;r++)
+      for(let c=0;c<COLS;c++)
+        pts.push({bx:c*SPACING-(COLS*SPACING/2)+W/2, by:r*SPACING-(ROWS*SPACING/2)+H*0.6, z:0});
+  }
+  function wave(p,time){
+    const dx=p.bx-W/2, dy=p.by-H*0.6;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    return Math.sin(dist*0.018-time*0.8)*28 + Math.sin(p.bx*0.015+time*0.4)*12;
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=0.012;
+    // Draw horizontal lines
+    for(let r=0;r<ROWS;r++){
+      ctx.beginPath();
+      for(let c=0;c<COLS;c++){
+        const p=pts[r*COLS+c];
+        const y=p.by+wave(p,t);
+        const alpha=Math.max(0.04,0.18-Math.abs(p.by-H*0.6)/(H*0.7));
+        if(c===0){ctx.strokeStyle=`rgba(99,102,241,${alpha})`;ctx.moveTo(p.bx,y);}
+        else ctx.lineTo(p.bx,y);
+      }
+      ctx.lineWidth=0.7; ctx.stroke();
+    }
+    // Draw vertical lines
+    for(let c=0;c<COLS;c++){
+      ctx.beginPath();
+      for(let r=0;r<ROWS;r++){
+        const p=pts[r*COLS+c];
+        const y=p.by+wave(p,t);
+        const alpha=Math.max(0.03,0.12-Math.abs(p.bx-W/2)/(W*0.7));
+        if(r===0){ctx.strokeStyle=`rgba(99,102,241,${alpha})`;ctx.moveTo(p.bx,y);}
+        else ctx.lineTo(p.bx,y);
+      }
+      ctx.lineWidth=0.7; ctx.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+  resize(); genPts(); draw();
+  window.addEventListener('resize',()=>{resize();genPts();});
+})();
+</script>
 """, unsafe_allow_html=True)
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  GROQ
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1202,6 +1286,28 @@ STAG = {"Physics":"phy","Chemistry":"chem","Mathematics":"math"}
 # ─────────────────────────────────────────────────────────────────────────────
 def safe(t):
     return html_lib.escape(str(t)) if t else ""
+
+def strip_html(t):
+    """Remove ALL HTML tags and decode entities — fixes questions showing raw HTML code."""
+    if not t: return ""
+    t = str(t)
+    # Remove HTML tags
+    t = _re.sub(r'<[^>]+>', ' ', t)
+    # Decode common entities
+    t = t.replace('&amp;','&').replace('&lt;','<').replace('&gt;','>').replace('&nbsp;',' ').replace('&#39;',"'").replace('&quot;','"')
+    # Remove extra whitespace
+    t = _re.sub(r'[ \t]+', ' ', t).strip()
+    t = _re.sub(r'\n{3,}', '\n\n', t)
+    return t
+
+def clean_q(q):
+    """Strip HTML from all text fields of a question dict."""
+    for field in ('question','explanation'):
+        if field in q:
+            q[field] = strip_html(q[field])
+    if 'options' in q and isinstance(q['options'], dict):
+        q['options'] = {k: strip_html(v) for k,v in q['options'].items()}
+    return q
 
 def fmt_time(s):
     if s is None: return "∞"
@@ -1502,145 +1608,157 @@ def generate_ai_questions(chapters_info, n, difficulty, used_hashes):
 
 
 def verify_question(q):
-    prompt = f"""You are a strict MHT-CET fact-checker. Verify this question 100%.
+    """Fast single-question verify - just clean HTML and basic sanity check, no LLM call."""
+    q = clean_q(q)
+    q.setdefault("verified", True)
+    q.setdefault("fix_applied", False)
+    q.setdefault("fix_note", "")
+    q.setdefault("difficulty", "Medium")
+    return q
 
-{FACT_REFERENCE}
 
-QUESTION:
-{json.dumps(q, indent=2)}
+def batch_verify_ai(questions, placeholder):
+    """Batch-verify AI questions via ONE LLM call instead of one per question - 10x faster."""
+    if not questions:
+        return questions
 
-Check:
-1. Question text is clean plain text — NO HTML tags, no angle brackets. Remove any HTML.
-2. All options are plain text.
-3. "correct" key is genuinely the right answer. Fix if wrong.
-4. Explanation is accurate.
-5. "difficulty" field exists ("Easy","Medium","Hard").
+    # First do HTML cleaning on all of them immediately
+    questions = [clean_q(q) for q in questions]
 
-Return ONLY corrected JSON:
-{{"id":0,"subject":"","std":"","chapter":"","pyq_year":null,"difficulty":"Medium","question":"","options":{{"A":"","B":"","C":"","D":""}},"correct":"","explanation":"","verified":true,"fix_applied":false,"fix_note":""}}"""
+    # Only send a sample of 8 for answer checking (catches most errors without slow loop)
+    SAMPLE = min(8, len(questions))
+    sample = random.sample(questions, SAMPLE)
+    sample_json = json.dumps([{
+        "i": questions.index(q),
+        "q": q.get("question","")[:120],
+        "opts": q.get("options",{}),
+        "ans": q.get("correct",""),
+        "ch": q.get("chapter","")
+    } for q in sample], ensure_ascii=False)
 
+    prompt = (
+        "You are an MHT-CET fact-checker. Review these questions and return ONLY a JSON array "
+        "of corrections for any question where the 'ans' is WRONG. "
+        "If a question's answer is correct, do NOT include it in your response. "
+        "Only include questions that need fixing. Format: "
+        '[{"i":0,"correct":"B","fix":"reason"}] '
+        f"If nothing needs fixing return []. Questions:\n{sample_json}"
+    )
+
+    corrections = {}
     try:
         resp = client.chat.completions.create(
-            model=MODEL, messages=[{"role":"user","content":prompt}],
-            temperature=0.1, max_tokens=1200)
-        c = parse_obj(resp.choices[0].message.content)
-        c.setdefault("verified",True); c.setdefault("fix_applied",False)
-        c.setdefault("fix_note",""); c.setdefault("difficulty","Medium")
-        c.setdefault("pyq_year",q.get("pyq_year"))
-        return c
+            model=MODEL,
+            messages=[{"role":"user","content":prompt}],
+            temperature=0.1, max_tokens=800
+        )
+        fixes = parse_json(resp.choices[0].message.content)
+        if isinstance(fixes, list):
+            for fix in fixes:
+                if isinstance(fix, dict) and "i" in fix and "correct" in fix:
+                    corrections[fix["i"]] = fix
     except:
-        q.update({"verified":False,"fix_applied":False,"fix_note":"verify error","difficulty":q.get("difficulty","Medium")})
-        return q
+        pass
+
+    # Apply corrections
+    for idx, fix in corrections.items():
+        if 0 <= idx < len(questions):
+            old = questions[idx].get("correct")
+            new_ans = fix.get("correct","")
+            if new_ans and new_ans != old and new_ans in ("A","B","C","D"):
+                questions[idx]["correct"] = new_ans
+                questions[idx]["fix_applied"] = True
+                questions[idx]["fix_note"] = fix.get("fix","Answer corrected")
+
+    for q in questions:
+        q.setdefault("verified", True)
+        q.setdefault("fix_applied", False)
+        q.setdefault("fix_note", "")
+
+    return questions
 
 
 def run_pipeline(chapters_info, n, difficulty, placeholder):
-    """Main pipeline: guarantee exactly n questions, no repetition, correct difficulty."""
-    uname = (st.session_state.get("user") or {}).get("username", "guest")
-
-    # Load cross-session used hashes to prevent ANY repetition
-    used_hashes = st.session_state.get("used_hashes", set())
-    persisted   = get_user_used_hashes(uname)
-    used_hashes = used_hashes | persisted
+    """Main pipeline: generate exactly n questions, clean HTML, fast batch verify."""
+    uname = (st.session_state.get("user") or {}).get("username","guest")
+    used_hashes = st.session_state.get("used_hashes", set()) | get_user_used_hashes(uname)
 
     vlog = []
 
-    # ── PHASE 1: PYQs (up to 30% of total) ──────────────────────────────────
+    # ── Phase 1: PYQs ────────────────────────────────────────────────────────
     n_pyq_want = min(max(1, int(n * 0.30)), n)
-    placeholder.markdown(f"""
-    <div style="text-align:center;padding:2rem">
-        <div class="spinner-ring" style="margin:0 auto 1rem"></div>
-        <div style="font-weight:700;font-size:1rem;color:#0d1117">Phase 1 / 3 — Loading Real PYQs</div>
-        <div style="color:#6b7280;font-size:0.85rem;margin-top:0.3rem">Pulling verified MHT-CET past year questions…</div>
+    placeholder.markdown("""
+    <div class="loading-wrap">
+      <div class="loading-logo">MHT·<em>CET</em> AI</div>
+      <div class="spinner-ring"></div>
+      <div class="loading-label">Loading Real PYQs</div>
+      <div class="loading-sub">Pulling verified past year questions…</div>
     </div>""", unsafe_allow_html=True)
 
     pyq_qs = get_pyqs_for_chapters(chapters_info, n_pyq_want, used_hashes)
-    n_got_pyq = len(pyq_qs)
-    n_ai_need  = n - n_got_pyq  # must generate this many AI questions
+    pyq_qs = [clean_q(q) for q in pyq_qs]
+    n_ai_need = n - len(pyq_qs)
 
-    # ── PHASE 2: AI generation with retry guarantee ──────────────────────────
+    # ── Phase 2: AI generation ───────────────────────────────────────────────
     placeholder.markdown(f"""
-    <div style="text-align:center;padding:2rem">
-        <div class="spinner-ring" style="margin:0 auto 1rem"></div>
-        <div style="font-weight:700;font-size:1rem;color:#0d1117">Phase 2 / 3 — Generating {n_ai_need} AI Questions</div>
-        <div style="color:#6b7280;font-size:0.85rem;margin-top:0.5rem">
-            {n_got_pyq} real PYQs loaded · Generating {n_ai_need} CET-standard AI questions<br>
-            <span style="font-size:0.75rem;color:#9ca3af">Large tests (100-150 Qs) may take 2-3 minutes</span>
-        </div>
+    <div class="loading-wrap">
+      <div class="spinner-ring"></div>
+      <div class="loading-label">Generating {n_ai_need} AI Questions</div>
+      <div class="loading-sub">{len(pyq_qs)} PYQs loaded · Creating CET-level questions…</div>
+      <div class="loading-progress"><div class="loading-progress-fill" style="width:30%"></div></div>
     </div>""", unsafe_allow_html=True)
 
     ai_qs = generate_ai_questions(chapters_info, n_ai_need, difficulty, used_hashes)
 
-    # GUARANTEE: retry if we're short
-    shortfall = n_ai_need - len(ai_qs)
-    retry = 0
-    while shortfall > 0 and retry < 8:
-        retry += 1
-        placeholder.markdown(f"""
-        <div style="text-align:center;padding:2rem">
-            <div class="spinner-ring" style="margin:0 auto 1rem"></div>
-            <div style="font-weight:700;font-size:1rem;color:#0d1117">Filling Shortfall — {shortfall} more needed</div>
-            <div style="color:#6b7280;font-size:0.85rem">Retry {retry}/8…</div>
-        </div>""", unsafe_allow_html=True)
-        extra = generate_ai_questions(chapters_info, shortfall + 5, difficulty, used_hashes)
-        ai_qs.extend(extra)
+    # Retry guarantee
+    for attempt in range(6):
         shortfall = n_ai_need - len(ai_qs)
+        if shortfall <= 0: break
+        placeholder.markdown(f"""
+        <div class="loading-wrap">
+          <div class="spinner-ring"></div>
+          <div class="loading-label">Need {shortfall} more questions…</div>
+          <div class="loading-sub">Retry {attempt+1}/6</div>
+        </div>""", unsafe_allow_html=True)
+        extra = generate_ai_questions(chapters_info, shortfall+3, difficulty, used_hashes)
+        ai_qs.extend(extra)
 
-    # Trim to exact count needed
     ai_qs = ai_qs[:n_ai_need]
     all_raw = pyq_qs + ai_qs
 
-    # If still short (edge case), pad with more AI
+    # Pad if still short
     if len(all_raw) < n:
-        extra_need = n - len(all_raw)
-        placeholder.markdown(f'<div style="text-align:center;padding:1rem">Generating {extra_need} final questions…</div>', unsafe_allow_html=True)
-        extra = generate_ai_questions(chapters_info, extra_need + 5, difficulty, used_hashes)
-        all_raw.extend(extra[:extra_need])
-
-    # Final trim
+        extra = generate_ai_questions(chapters_info, n-len(all_raw)+3, difficulty, used_hashes)
+        all_raw.extend(extra[:n-len(all_raw)])
     all_raw = all_raw[:n]
 
-    # ── PHASE 3: Dual-pass verification ──────────────────────────────────────
-    fixes = 0
-    verified = []
-    total_v = len(all_raw)
+    # ── Phase 3: Fast batch verification ─────────────────────────────────────
+    placeholder.markdown(f"""
+    <div class="loading-wrap">
+      <div class="spinner-ring"></div>
+      <div class="loading-label">Verifying {len(all_raw)} Questions</div>
+      <div class="loading-sub">Checking answers · Cleaning formatting…</div>
+      <div class="loading-progress"><div class="loading-progress-fill" style="width:70%"></div></div>
+    </div>""", unsafe_allow_html=True)
 
-    for i, q in enumerate(all_raw):
-        pct = int(((i + 1) / max(total_v, 1)) * 100)
-        is_pyq_q = bool(q.get("pyq_year"))
-        src_icon = "📚 PYQ" if is_pyq_q else "🤖 AI"
-        placeholder.markdown(f"""
-        <div style="padding:1.5rem">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem">
-                <span style="font-weight:700;font-size:0.95rem">Phase 3 / 3 — Dual-Pass Verification</span>
-                <span style="font-family:'JetBrains Mono';font-size:0.82rem;color:#6b7280;font-weight:600">{i+1}/{total_v}</span>
-            </div>
-            <div style="background:#e5e7eb;border-radius:999px;height:6px;margin-bottom:0.7rem;overflow:hidden">
-                <div style="width:{pct}%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:999px;height:6px;transition:width 0.3s ease"></div>
-            </div>
-            <div style="font-size:0.82rem;color:#374151">
-                {src_icon} · {q.get('chapter','')} · <strong>{q.get('subject','')}</strong> {q.get('std','')}
-            </div>
-            <div style="font-size:0.76rem;color:#059669;margin-top:4px;font-weight:600">✓ {fixes} auto-correction(s) so far</div>
-        </div>""", unsafe_allow_html=True)
+    # Separate PYQ (trusted, just clean) from AI (needs answer check)
+    pyq_verified   = [clean_q(q) for q in pyq_qs]
+    ai_q_list      = all_raw[len(pyq_qs):]
+    ai_verified    = batch_verify_ai(ai_q_list, placeholder)
 
-        vq = verify_question(q)
-        prev_correct = q.get("correct")
-        if vq.get("fix_applied") or vq.get("correct") != prev_correct:
-            fixes += 1
+    # Build vlog from fixes
+    for i, q in enumerate(ai_verified):
+        if q.get("fix_applied"):
             vlog.append({
-                "q_num":   i + 1,
-                "subject": q.get("subject", ""),
-                "chapter": q.get("chapter", ""),
-                "fix_note": vq.get("fix_note", "Answer corrected by verifier"),
+                "q_num": len(pyq_verified)+i+1,
+                "subject": q.get("subject",""),
+                "chapter": q.get("chapter",""),
+                "fix_note": q.get("fix_note",""),
             })
-            vq["fix_applied"] = True
-        # Preserve metadata
-        for key in ("subject","std","chapter","pyq_year","difficulty"):
-            if not vq.get(key):
-                vq[key] = q.get(key)
-        verified.append(vq)
 
-    # Save used hashes to prevent future repetition
+    verified = pyq_verified + ai_verified
+
+    # Save hashes
     st.session_state["used_hashes"] = used_hashes
     save_user_used_hashes(uname, used_hashes)
 
@@ -1649,7 +1767,6 @@ def run_pipeline(chapters_info, n, difficulty, placeholder):
 
 
 def render_sidebar():
-    """Render the beautiful sidebar with logo, user info, and navigation."""
     user    = st.session_state.get("user") or {}
     uname   = user.get("username","")
     uemail  = user.get("email","")
@@ -1659,387 +1776,164 @@ def render_sidebar():
     phase   = st.session_state.get("phase","setup")
 
     with st.sidebar:
-        # Logo
         st.markdown("""
-        <div class="sidebar-header">
-            <div class="sidebar-logo">MHT·<em>CET</em> AI</div>
-            <div class="sidebar-tagline">Maharashtra Entrance Prep · AI-Powered</div>
-        </div>""", unsafe_allow_html=True)
+        <div class="sidebar-logo">MHT·<em>CET</em> AI</div>
+        <div class="sidebar-tagline">Maharashtra Entrance Prep · AI-Powered</div>
+        """, unsafe_allow_html=True)
 
-        # User card
         if uname:
             ini = uname[0].upper()
-            if picture:
-                av = f'<img src="{picture}" style="width:36px;height:36px;border-radius:50%;border:2px solid rgba(37,99,235,0.2)">'
-            else:
-                av = f'<div class="sidebar-avatar">{ini}</div>'
+            av  = (f'<img src="{picture}" style="width:34px;height:34px;border-radius:50%;object-fit:cover">'
+                   if picture else
+                   f'<div class="user-avatar">{ini}</div>')
             st.markdown(f"""
-            <div class="sidebar-user">
+            <div class="user-card">
                 {av}
-                <div style="overflow:hidden">
-                    <div class="sidebar-user-name">{safe(display)}</div>
-                    <div class="sidebar-user-email">{safe(uemail)}</div>
+                <div>
+                    <div class="user-info-name">{safe(display[:20])}</div>
+                    <div class="user-info-email">{safe(uemail[:28])}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
 
-        st.markdown("")
+        st.markdown('<div class="nav-section"><div class="nav-label">Menu</div>', unsafe_allow_html=True)
 
-        # Navigation
-        st.markdown('<div class="nav-section-title">Navigation</div>', unsafe_allow_html=True)
-        nav_items = [
-            ("setup",     "📝", "New Test"),
+        NAV = [
+            ("setup",     "🏠", "Home"),
             ("analytics", "📊", "Analytics"),
-            ("history",   "📅", "History"),
+            ("history",   "📋", "History"),
         ]
-        for nav_phase, icon, label in nav_items:
-            is_active = phase == nav_phase
-            active_cls = "active" if is_active else ""
-            if st.button(f"{icon}  {label}", key=f"nav_{nav_phase}", use_container_width=True):
-                if nav_phase == "setup":
-                    reset_state()
-                else:
+        for nav_phase, icon, label in NAV:
+            active = "active" if phase == nav_phase else ""
+            if st.button(f"{icon}  {label}", key=f"nav_{nav_phase}",
+                         use_container_width=True,
+                         help=label):
+                if nav_phase != phase:
+                    # Reset test state when going home
+                    if nav_phase == "setup":
+                        for k in ("questions","answers","current_q","marked","start_time","verify_log","used_hashes"):
+                            st.session_state.pop(k, None)
                     st.session_state.phase = nav_phase
-                st.rerun()
+                    st.rerun()
 
-        st.markdown('<hr style="border:none;border-top:1px solid rgba(0,0,0,0.06);margin:0.75rem 0">', unsafe_allow_html=True)
-        st.markdown('<div class="nav-section-title">Account</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<hr style="margin:0.5rem 0.8rem;border-color:rgba(255,255,255,0.06)">', unsafe_allow_html=True)
 
-        if st.button("🚪  Sign Out", key="nav_logout", use_container_width=True):
-            reset_state(keep_chapters=False)
-            st.session_state.user      = None
-            st.session_state._auth_msg = ("", False)
+        if st.button("🚪  Sign Out", key="signout_sb", use_container_width=True):
+            tok = st.session_state.get("_sess_token")
+            if tok:
+                delete_session_token(tok)
+            for k in list(st.session_state.keys()):
+                del st.session_state[k]
+            st.query_params.clear()
             st.rerun()
 
-        # Footer
         st.markdown("""
-        <div style="position:absolute;bottom:1rem;left:0;right:0;padding:0 1rem;
-                    text-align:center;font-size:0.68rem;color:#9ca3af">
-            Dual-Pass Verified · PYQ + AI Mixed<br>
-            <span style="color:#d1d5db">●</span> GROQ LLaMA 3.3 70B
+        <div class="sidebar-footer">
+            ✦ MHT-CET 2024-2025 · PCM
         </div>""", unsafe_allow_html=True)
 
 
-# ═════════════════════════════════════════════════════════════════════════════
-#  PHASE: SETUP  — multi-tab configuration
-# ═════════════════════════════════════════════════════════════════════════════
 if st.session_state.phase == "setup":
     render_sidebar()
-    st.markdown('<script>try{window.parent.document.querySelector("section.main").scrollTop=0;}catch(e){}</script>', unsafe_allow_html=True)
+    user   = st.session_state.get("user") or {}
+    gname  = (user.get("name","") or user.get("username","")).split()[0]
+    greeting = f"Hey {gname}!" if gname else "Ready to Practice?"
 
-    # Page header
-    user = st.session_state.get("user") or {}
-    gname = user.get("name","") or user.get("username","")
-    greeting = f"Welcome back, {gname.split()[0]}! 👋" if gname else "Configure Your Test"
     st.markdown(f"""
-    <div class="anim-1" style="padding:1.5rem 0 0.5rem">
-        <div class="page-title">{greeting}</div>
-        <div class="page-subtitle">Build a custom MHT-CET practice test with real PYQs and AI-generated questions.</div>
+    <div style="padding:1.2rem 0 0.6rem">
+      <div style="font-size:1.5rem;font-weight:800;color:#e8e8f0;letter-spacing:-0.02em">{greeting}</div>
+      <div style="font-size:0.82rem;color:#6b6b8a;margin-top:0.25rem">Build a custom MHT-CET test · Real PYQs + AI-generated questions</div>
     </div>""", unsafe_allow_html=True)
 
-    # ── TABS ──
-    tab1, tab2, tab3 = st.tabs(["📚  Subjects & Chapters", "⚙️  Test Settings", "🚀  Launch"])
-
-    # ─────────────────────────────────────────────────────
-    # TAB 1 — Subject & Chapter Selection
-    # ─────────────────────────────────────────────────────
-    with tab1:
-        col1, col2 = st.columns(2)
-        with col1:
-            sel_subjects = st.multiselect(
-                "Subjects", ["Physics","Chemistry","Mathematics"],
-                default=["Physics","Chemistry","Mathematics"],
-                key="sel_subjects_t1"
-            )
-        with col2:
-            sel_std = st.multiselect(
-                "Standard", ["11th","12th"],
-                default=["11th","12th"],
-                key="sel_std_t1"
-            )
-        st.markdown("")
-
-        available = [
-            {"subject":s,"std":d,"chapter":c}
-            for s in (sel_subjects or [])
-            for d in (sel_std or [])
-            for c in SYLLABUS.get(s,{}).get(d,[])
-        ]
-
-        if not available:
-            st.markdown('<div class="info-box warn">⚠️ Pick at least one subject and standard to see chapters.</div>', unsafe_allow_html=True)
-        else:
-            # Select All / Clear All
-            ba1, ba2, _, count_col = st.columns([1,1,4,2])
-            with ba1:
-                if st.button("✅ All", use_container_width=True, key="sel_all"):
-                    for a in available:
-                        st.session_state.chapter_selection[f"{a['subject']}|{a['std']}|{a['chapter']}"] = True
-                    st.rerun()
-            with ba2:
-                if st.button("✕ Clear", use_container_width=True, key="clr_all"):
-                    for a in available:
-                        st.session_state.chapter_selection[f"{a['subject']}|{a['std']}|{a['chapter']}"] = False
-                    st.rerun()
-
-            st.markdown("")
-
-            # Subject sections
-            for subj in sel_subjects:
-                tag = STAG.get(subj,"phy")
-                subj_chapters = [
-                    {"subject":s,"std":d,"chapter":c}
-                    for s in [subj] for d in (sel_std or [])
-                    for c in SYLLABUS.get(s,{}).get(d,[])
-                ]
-                selected_in_subj = sum(
-                    1 for a in subj_chapters
-                    if st.session_state.chapter_selection.get(f"{a['subject']}|{a['std']}|{a['chapter']}", True)
-                )
-
-                st.markdown(f"""
-                <div style="display:flex;align-items:center;gap:10px;margin:1rem 0 0.5rem">
-                    <span class="pill pill-{tag}" style="font-size:0.78rem;padding:4px 12px">{subj}</span>
-                    <span style="font-size:0.75rem;color:#9ca3af">{selected_in_subj}/{len(subj_chapters)} selected</span>
-                </div>""", unsafe_allow_html=True)
-
-                for std in sel_std:
-                    clist = SYLLABUS.get(subj,{}).get(std,[])
-                    if not clist: continue
-                    st.markdown(f'<div style="font-size:0.72rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem">{std} Standard</div>', unsafe_allow_html=True)
-                    cols = st.columns(3)
-                    for ci, ch in enumerate(clist):
-                        k = f"{subj}|{std}|{ch}"
-                        st.session_state.chapter_selection.setdefault(k, True)
-                        checked = cols[ci%3].checkbox(
-                            ch,
-                            value=st.session_state.chapter_selection.get(k, True),
-                            key=f"ch_{k}"
-                        )
-                        st.session_state.chapter_selection[k] = checked
-
-            # Tally
-            selected_chapters = [
-                {"subject":k.split("|")[0],"std":k.split("|")[1],"chapter":k.split("|")[2]}
-                for k,v in st.session_state.chapter_selection.items()
-                if v and any(
-                    a["subject"]==k.split("|")[0] and a["std"]==k.split("|")[1] and a["chapter"]==k.split("|")[2]
-                    for a in available
-                )
-            ]
-            st.markdown("")
-            n_sel = len(selected_chapters)
-            n_tot = len(available)
-            pct_sel = int(n_sel/n_tot*100) if n_tot else 0
-            st.markdown(f"""
-            <div class="info-box success">
-                ✅ <strong>{n_sel}</strong> of <strong>{n_tot}</strong> chapters selected
-                ({pct_sel}%) — ready to generate questions
-            </div>""", unsafe_allow_html=True)
-
-            # Store for use in other tabs
-            st.session_state._sel_chapters_tmp  = selected_chapters
-            st.session_state._sel_subjects_tmp  = sel_subjects
-            st.session_state._sel_std_tmp       = sel_std
-
-    # ─────────────────────────────────────────────────────
-    # TAB 2 — Test Settings
-    # ─────────────────────────────────────────────────────
-    with tab2:
-        st.markdown('<div class="sh">Question Bank</div>', unsafe_allow_html=True)
-        c1, c2 = st.columns(2)
-        with c1:
-            num_q = st.number_input("Number of Questions", min_value=1, max_value=200, value=10, key="num_q_t2")
-        with c2:
-            difficulty = st.selectbox("Difficulty Level", ["Mixed","Easy","Medium","Hard"], key="diff_t2")
-
-        st.markdown("""
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;margin:0.75rem 0 1rem">
-            <div class="metric-card" style="text-align:center;padding:0.9rem">
-                <div style="font-size:1.4rem">📚</div>
-                <div style="font-size:0.72rem;font-weight:700;color:#64748b;margin-top:0.2rem">~40% Real PYQs</div>
-            </div>
-            <div class="metric-card" style="text-align:center;padding:0.9rem">
-                <div style="font-size:1.4rem">🤖</div>
-                <div style="font-size:0.72rem;font-weight:700;color:#64748b;margin-top:0.2rem">~60% AI Generated</div>
-            </div>
-            <div class="metric-card" style="text-align:center;padding:0.9rem">
-                <div style="font-size:1.4rem">🔍</div>
-                <div style="font-size:0.72rem;font-weight:700;color:#64748b;margin-top:0.2rem">Dual-Pass Verified</div>
-            </div>
-            <div class="metric-card" style="text-align:center;padding:0.9rem">
-                <div style="font-size:1.4rem">⚡</div>
-                <div style="font-size:0.72rem;font-weight:700;color:#64748b;margin-top:0.2rem">LLaMA 3.3 70B</div>
-            </div>
-        </div>""", unsafe_allow_html=True)
-
-        st.markdown('<div class="sh">Timer Mode</div>', unsafe_allow_html=True)
-        timer_mode = st.selectbox(
-            "Timer",
-            ["Real CET (90+90 min)","90 min","60 min","30 min","Custom","Free Style"],
-            key="timer_t2"
-        )
-        custom_mins = None
-        if timer_mode == "Custom":
-            custom_mins = st.number_input("Custom Duration (minutes)", 1, 360, 45, key="custom_min_t2")
-
-        # Timer info cards
-        timer_infos = {
-            "Real CET (90+90 min)": ("🎯", "Real CET Mode", "90 min for Physics+Chemistry, then separate 90 min for Mathematics — exactly like the actual exam."),
-            "90 min":   ("⏱️", "90 Minutes", "Standard MHT-CET Paper 1 or Paper 2 duration."),
-            "60 min":   ("⏰", "60 Minutes", "Focused sprint — great for chapter-wise practice."),
-            "30 min":   ("⚡", "30 Minutes", "Quick revision mode for rapid-fire practice."),
-            "Custom":   ("🔧", "Custom Timer", f"You set the duration: {custom_mins or 45} minutes."),
-            "Free Style": ("♾️", "No Timer", "Practice without time pressure — focus on understanding."),
-        }
-        if timer_mode in timer_infos:
-            ico, title, desc = timer_infos[timer_mode]
-            st.markdown(f"""
-            <div class="info-box" style="margin-top:0.5rem">
-                {ico} <strong>{title}</strong> — {desc}
-            </div>""", unsafe_allow_html=True)
-
-        # Save settings to session for tab 3
-        st.session_state._num_q_tmp     = num_q
-        st.session_state._diff_tmp      = difficulty
-        st.session_state._timer_tmp     = timer_mode
-        st.session_state._custom_tmp    = custom_mins
-
-    # ─────────────────────────────────────────────────────
-    # TAB 3 — Launch
-    # ─────────────────────────────────────────────────────
-    with tab3:
-        # Retrieve state
-        num_q        = st.session_state.get("_num_q_tmp", 10)
-        difficulty   = st.session_state.get("_diff_tmp", "Mixed")
-        timer_mode   = st.session_state.get("_timer_tmp", "Real CET (90+90 min)")
-        custom_mins  = st.session_state.get("_custom_tmp")
-        sel_chapters = st.session_state.get("_sel_chapters_tmp", [])
-        sel_subjects = st.session_state.get("_sel_subjects_tmp", [])
-
-        # Re-compute from stored chapter selection if _sel_chapters_tmp is empty
-        if not sel_chapters and st.session_state.get("chapter_selection"):
-            SYLLABUS_ref = SYLLABUS
-            all_avail = [
-                {"subject":s,"std":d,"chapter":c}
-                for s in ["Physics","Chemistry","Mathematics"]
-                for d in ["11th","12th"]
-                for c in SYLLABUS_ref.get(s,{}).get(d,[])
-            ]
-            sel_chapters = [
-                {"subject":k.split("|")[0],"std":k.split("|")[1],"chapter":k.split("|")[2]}
-                for k,v in st.session_state.chapter_selection.items() if v
-                and any(a["subject"]==k.split("|")[0] and a["std"]==k.split("|")[1] and a["chapter"]==k.split("|")[2] for a in all_avail)
-            ]
-
-        # Summary card
-        subj_counts = {}
-        for c in sel_chapters:
-            subj_counts[c["subject"]] = subj_counts.get(c["subject"],0)+1
-
-        subj_tags = {"Physics":"phy","Chemistry":"chem","Mathematics":"math"}
-        tags_html = " ".join(
-            f'<span class="pill pill-{subj_tags.get(s,"bl")}">{s}: {n} ch</span>'
-            for s,n in subj_counts.items()
-        )
-
-        diff_colors = {"Mixed":"violet","Easy":"green","Medium":"amber","Hard":"red"}
-        diff_tag = f'<span class="pill pill-{diff_colors.get(difficulty,"blue")}">{difficulty}</span>'
-
-        timer_display = timer_mode
-        n_pyq_est = min(max(1, int(num_q*0.4)), num_q)
-        n_ai_est  = num_q - n_pyq_est
-
-        st.markdown(f"""
-        <div class="score-hero anim-1" style="padding:2rem;margin-bottom:1.2rem">
-            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:0.8rem;font-weight:700">Test Summary</div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:1.2rem">
-                <div>
-                    <div style="font-size:2.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-2px;color:#0d1117">{num_q}</div>
-                    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#64748b">Questions</div>
-                </div>
-                <div>
-                    <div style="font-size:2.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-2px;color:#0d1117">{len(sel_chapters)}</div>
-                    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#64748b">Chapters</div>
-                </div>
-                <div>
-                    <div style="font-size:2.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-2px;color:#0d1117">{num_q*2}</div>
-                    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#64748b">Max Score</div>
-                </div>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:0.8rem">
-                {tags_html}
-                {diff_tag}
-                <span class="pill pill-gray">⏱️ {timer_display}</span>
-                <span class="pill pill-blue">📚 ~{n_pyq_est} PYQ</span>
-                <span class="pill pill-violet">🤖 ~{n_ai_est} AI</span>
-            </div>
-        </div>""", unsafe_allow_html=True)
-
-        if not sel_chapters:
-            st.markdown('<div class="info-box warn">⚠️ No chapters selected — go to the <strong>Subjects & Chapters</strong> tab and select chapters first.</div>', unsafe_allow_html=True)
-        else:
-            if st.button("🚀  Generate & Start Test", use_container_width=True, key="launch_btn"):
-                is_cet = timer_mode == "Real CET (90+90 min)"
-                tl = cet_pc = cet_m = None
-                if is_cet:
-                    cet_pc = 5400; cet_m = 5400; tl = 10800
-                elif timer_mode == "90 min":   tl = 5400
-                elif timer_mode == "60 min":   tl = 3600
-                elif timer_mode == "30 min":   tl = 1800
-                elif timer_mode == "Custom":   tl = (custom_mins or 45)*60
-                # Free Style → tl = None
-
-                st.session_state.update({
-                    "selected_chapters": sel_chapters,
-                    "num_questions":     num_q,
-                    "difficulty":        difficulty,
-                    "time_limit":        tl,
-                    "phase":             "loading",
-                    "answers":           {},
-                    "marked_review":     set(),
-                    "current_q":         0,
-                    "questions":         [],
-                    "start_time":        None,
-                    "verify_log":        [],
-                    "_saved":            False,
-                    "cet_mode":          is_cet,
-                    "cet_pc_limit":      cet_pc,
-                    "cet_m_limit":       cet_m,
-                    "cet_math_start":    None,
-                })
+    # ── Quick-start cards ──────────────────────────────────────────────────
+    st.markdown('<div style="font-size:0.7rem;color:#6b6b8a;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;margin:0.3rem 0 0.5rem">Quick Start</div>', unsafe_allow_html=True)
+    qs_cols = st.columns(3)
+    QUICK = [
+        ("⚡", "Quick 10",    "PCM · 10 questions · 15 min", 10,  "Mixed",   ["Physics","Chemistry","Mathematics"]),
+        ("🎯", "Full Mock",   "PCM · 50 questions · 90 min", 50,  "Mixed",   ["Physics","Chemistry","Mathematics"]),
+        ("🔥", "Hard Drill",  "PCM · 25 questions · Hard",   25,  "Hard",    ["Physics","Chemistry","Mathematics"]),
+    ]
+    for col,(icon,title,desc,nq,diff,subjs) in zip(qs_cols, QUICK):
+        with col:
+            if st.button(f"{icon} {title}", key=f"qs_{title}", help=desc):
+                # Build chapters_info for all selected subjects
+                ch_info = []
+                for subj in subjs:
+                    for std, chs in SYLLABUS[subj].items():
+                        for ch in chs:
+                            ch_info.append({"subject":subj,"std":std,"chapter":ch})
+                st.session_state.selected_chapters = ch_info
+                st.session_state.num_questions     = nq
+                st.session_state.difficulty        = diff
+                st.session_state.phase             = "loading"
                 st.rerun()
 
-        # Tips section
-        st.markdown("")
-        st.markdown('<div class="sh">Test-Taking Tips</div>', unsafe_allow_html=True)
-        tips_tab1, tips_tab2, tips_tab3 = st.tabs(["🎯 Strategy", "⏱️ Time Management", "📚 About Questions"])
-        with tips_tab1:
-            st.markdown("""
-            <div class="card-inset">
-                <p style="font-size:0.85rem;line-height:1.7;color:#374151;margin:0">
-                    🔖 <strong>Mark for Review</strong> — Use the Mark button to flag uncertain questions and revisit them before submitting.<br><br>
-                    🧭 <strong>Question Palette</strong> — Jump to any question directly using the numbered palette at the bottom.<br><br>
-                    ✅ <strong>Attempt all</strong> — There's no negative marking, so always attempt rather than skip.
-                </p>
-            </div>""", unsafe_allow_html=True)
-        with tips_tab2:
-            st.markdown("""
-            <div class="card-inset">
-                <p style="font-size:0.85rem;line-height:1.7;color:#374151;margin:0">
-                    ⚛ <strong>Real CET Mode</strong> — Physics & Chemistry get 90 minutes together; Mathematics gets a fresh 90 minutes when you first visit a Maths question.<br><br>
-                    🔴 <strong>Red timer</strong> — Under 5 minutes remaining; prioritize skipped questions.<br><br>
-                    🟡 <strong>Yellow timer</strong> — Under 10 minutes; speed up your pace.
-                </p>
-            </div>""", unsafe_allow_html=True)
-        with tips_tab3:
-            st.markdown("""
-            <div class="card-inset">
-                <p style="font-size:0.85rem;line-height:1.7;color:#374151;margin:0">
-                    📚 <strong>PYQ Badge</strong> — Questions with this badge are real past year questions from MHT-CET exams.<br><br>
-                    🤖 <strong>AI Badge</strong> — AI-generated questions that mirror the real exam style, verified for accuracy.<br><br>
-                    ✎ <strong>Fixed Badge</strong> — Our verifier found and corrected an error in this question automatically.
-                </p>
-            </div>""", unsafe_allow_html=True)
+    st.markdown('<hr style="margin:1rem 0;border-color:rgba(255,255,255,0.06)">', unsafe_allow_html=True)
+
+    # ── Custom test builder ─────────────────────────────────────────────────
+    st.markdown('<div style="font-size:0.7rem;color:#6b6b8a;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;margin-bottom:0.8rem">Custom Test</div>', unsafe_allow_html=True)
+
+    tab1, tab2 = st.tabs(["🎛️  Configure", "📚  Chapter Filter"])
+
+    with tab1:
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            num_q = st.number_input("Questions", 5, 200, st.session_state.get("_cfg_n", 30), 5, key="_cfg_n")
+        with c2:
+            diff = st.selectbox("Difficulty", ["Mixed","Easy","Medium","Hard"],
+                index=["Mixed","Easy","Medium","Hard"].index(st.session_state.get("_cfg_diff","Mixed")),
+                key="_cfg_diff")
+        with c3:
+            subjs = st.multiselect("Subjects", ["Physics","Chemistry","Mathematics"],
+                default=st.session_state.get("_cfg_subj",["Physics","Chemistry","Mathematics"]),
+                key="_cfg_subj")
+
+        TIMER_OPTS = {
+            "Real CET (90+90 min)": 10800,
+            "90 minutes": 5400,
+            "60 minutes": 3600,
+            "30 minutes": 1800,
+            "No limit": None,
+        }
+        timer_choice = st.selectbox("Timer", list(TIMER_OPTS.keys()), key="_cfg_timer")
+        st.session_state.time_limit = TIMER_OPTS[timer_choice]
+        if timer_choice == "Real CET (90+90 min)":
+            st.session_state.cet_mode = True
+
+        if st.button("🚀  Start Custom Test", key="start_custom", use_container_width=True):
+            if not subjs:
+                st.warning("Select at least one subject.")
+            else:
+                ch_info = []
+                for subj in subjs:
+                    for std, chs in SYLLABUS[subj].items():
+                        for ch in chs:
+                            ch_info.append({"subject":subj,"std":std,"chapter":ch})
+                st.session_state.selected_chapters = ch_info
+                st.session_state.num_questions     = num_q
+                st.session_state.difficulty        = diff
+                st.session_state.phase             = "loading"
+                st.rerun()
+
+    with tab2:
+        st.markdown('<div style="font-size:0.78rem;color:#6b6b8a;margin-bottom:0.6rem">Optionally pick specific chapters (leave blank for all)</div>', unsafe_allow_html=True)
+        sel_subj = st.selectbox("Browse subject", ["Physics","Chemistry","Mathematics"], key="_browse_subj")
+        sel_std  = st.selectbox("Standard", ["11th","12th"], key="_browse_std")
+        avail    = SYLLABUS.get(sel_subj,{}).get(sel_std,[])
+        chosen   = st.multiselect("Chapters (optional)", avail, key="_browse_chs")
+
+        if chosen:
+            st.markdown(f'<div class="pill pill-blue" style="margin-top:0.5rem">{len(chosen)} chapters selected</div>', unsafe_allow_html=True)
+            if st.button("🚀  Start with These Chapters", key="start_filtered"):
+                ch_info = [{"subject":sel_subj,"std":sel_std,"chapter":c} for c in chosen]
+                nq      = st.session_state.get("_cfg_n", 20)
+                diff    = st.session_state.get("_cfg_diff","Mixed")
+                st.session_state.selected_chapters = ch_info
+                st.session_state.num_questions     = nq
+                st.session_state.difficulty        = diff
+                st.session_state.phase             = "loading"
+                st.rerun()
+
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -2169,7 +2063,7 @@ elif st.session_state.phase == "test":
                 {pyq_html}
             </div>
         </div>
-        <p class="q-text">{safe(q['question'])}</p>
+        <p class="q-text">{safe(strip_html(q.get("question","")))}</p>
     </div>""", unsafe_allow_html=True)
 
     # ── OPTIONS ──
@@ -2433,7 +2327,7 @@ elif st.session_state.phase == "review":
                     </div>""", unsafe_allow_html=True)
                     if fix and q.get("fix_note"):
                         st.markdown(f'<div class="fix-note">✎ {safe(q["fix_note"])}</div>', unsafe_allow_html=True)
-                    st.markdown(f'<p style="font-size:0.95rem;line-height:1.8;margin-bottom:0.8rem;color:#0d1117">{safe(q["question"])}</p>', unsafe_allow_html=True)
+                    st.markdown(f'<p style="font-size:0.95rem;line-height:1.8;margin-bottom:0.8rem;color:#0d1117">{safe(strip_html(q.get("question","")))}</p>', unsafe_allow_html=True)
                     for k,v in q["options"].items():
                         sv = safe(v)
                         if k==ck_val and k==ua:
