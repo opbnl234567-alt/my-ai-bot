@@ -431,7 +431,7 @@ def _session_file(token: str) -> str:
 def save_session_token(token: str, username: str):
     """Store session token → username mapping on disk."""
     data = {"username": username, "created": datetime.now().isoformat(),
-            "expires": (datetime.now().timestamp() + 30 * 86400)}  # 30 days
+            "expires": (datetime.now().timestamp() + 365 * 86400)}  # 365 days
     with open(_session_file(token), "w") as f: json.dump(data, f)
 
 def load_session_token(token: str):
@@ -577,6 +577,15 @@ section[data-testid="stSidebar"] > div { padding: 0 !important; }
   position: relative; z-index: 1;
   padding: 1rem 1.2rem 2rem !important;
   max-width: 100% !important;
+  margin: 0 !important;
+}
+/* Force full width, no side margins */
+[data-testid="stAppViewContainer"] > section.main {
+  padding-left: 0 !important;
+  overflow-x: hidden !important;
+}
+[data-testid="column"] {
+  overflow-x: hidden !important;
 }
 
 /* ── Sidebar ── */
@@ -748,8 +757,19 @@ label, .stSelectbox label, .stNumberInput label,
 }
 .q-text {
   font-size: 1rem; color: var(--text); line-height: 1.6;
-  white-space: pre-wrap; word-break: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  max-width: 100%;
+  overflow: hidden;
   font-weight: 500;
+  display: block;
+}
+/* Force all question containers to not overflow */
+.q-card, .q-card * {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .q-meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
 
@@ -1095,91 +1115,90 @@ if "_sess_token" not in st.session_state:
     st.session_state._sess_token = None
 
 # ── Auto-restore session from URL param (survives page refresh & 24h) ──
+# ── Try to restore session from localStorage (backup for URL param) ──
+if not st.session_state.user and not st.session_state.get("_sess_token"):
+    st.markdown("""
+    <script>
+    (function(){
+        try {
+            var tok = localStorage.getItem('mhtcet_session');
+            if(tok) {
+                var url = new URL(window.location.href);
+                if(!url.searchParams.get('_st')) {
+                    url.searchParams.set('_st', tok);
+                    window.location.replace(url.toString());
+                }
+            }
+        } catch(e){}
+    })();
+    </script>""", unsafe_allow_html=True)
+
 if not st.session_state.user:
-    _url_token = st.query_params.get("_st") or st.session_state.get("_sess_token")
+    # Try URL param first, then session state token
+    _url_token = (st.query_params.get("_st","") or
+                  st.session_state.get("_sess_token",""))
+    _url_token = str(_url_token).strip() if _url_token else ""
     if _url_token:
-        _restored_user = load_session_token(str(_url_token))
+        _restored_user = load_session_token(_url_token)
         if _restored_user:
             _all_users = _load_users()
             if _restored_user in _all_users:
-                st.session_state.user = _all_users[_restored_user]
+                st.session_state.user        = _all_users[_restored_user]
                 st.session_state._sess_token = _url_token
+                # Ensure URL keeps the token
+                try:
+                    st.query_params["_st"] = _url_token
+                except Exception:
+                    pass
                 if st.session_state.get("phase") not in ("setup","test","review","analytics","history","loading"):
                     st.session_state.phase = "setup"
 
 if not st.session_state.user:
-    # ── Floating background orbs ──
-    st.markdown("""
-    <style>
-    [data-testid="stAppViewContainer"]>.main { background:#f0f4f8 !important; }
-    .orb { position:fixed; border-radius:50%; filter:blur(60px); opacity:0.35; pointer-events:none; z-index:0; animation:orbFloat 12s ease-in-out infinite alternate; }
-    .orb1 { width:400px;height:400px;background:radial-gradient(#bfdbfe,#93c5fd); top:-100px;left:-100px; animation-duration:14s; }
-    .orb2 { width:350px;height:350px;background:radial-gradient(#ddd6fe,#c4b5fd); bottom:-80px;right:-80px; animation-duration:10s; }
-    .orb3 { width:280px;height:280px;background:radial-gradient(#a7f3d0,#6ee7b7); top:40%;left:60%; animation-duration:16s; }
-    @keyframes orbFloat {
-        from { transform:translate(0,0) scale(1); }
-        to   { transform:translate(30px,20px) scale(1.08); }
-    }
-    </style>
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-    """, unsafe_allow_html=True)
+    # Clean dark login page
+    _, col, _ = st.columns([1, 1.6, 1])
+    with col:
+        st.markdown("""
+        <style>
+        [data-testid="stAppViewContainer"] > .main .block-container {
+            display:flex; flex-direction:column; align-items:center;
+            justify-content:center; min-height:90vh; padding-top:2rem !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-    _, mid, _ = st.columns([1, 1.4, 1])
-    with mid:
-        st.markdown("")
-        st.markdown("")
-        st.markdown('<div class="auth-logo" style="padding-top:1.5rem">MHT·<em>CET</em> AI</div>', unsafe_allow_html=True)
-        st.markdown('<div class="auth-tagline">Maharashtra Engineering Entrance Practice Platform</div>', unsafe_allow_html=True)
+        # Logo — just the name, centered
+        st.markdown("""
+        <div style="text-align:center;margin-bottom:2.5rem">
+            <div style="font-size:2.2rem;font-weight:900;letter-spacing:-0.03em;color:#e8e8f0">
+                MHT·<span style="color:#818cf8">CET</span> AI
+            </div>
+            <div style="font-size:0.78rem;color:#6b6b8a;margin-top:0.4rem;letter-spacing:0.04em">
+                Maharashtra Engineering Entrance · AI Practice
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
+        # Auth message
         amsg, aok = st.session_state._auth_msg
         if amsg:
-            cls = "auth-ok" if aok else "auth-err"
-            st.markdown(f'<div class="{cls}">{_safe_html(amsg)}</div>', unsafe_allow_html=True)
-
-        # ── Google Sign-In (shown only if configured) ──
-        if google_oauth_configured():
-            _state_token = secrets.token_urlsafe(16)
-            _gurl = google_auth_url(_state_token)
+            bg  = "rgba(52,211,153,0.12)" if aok else "rgba(248,113,113,0.12)"
+            col2 = "#34d399" if aok else "#f87171"
             st.markdown(f"""
-            <div style="margin-bottom:0.3rem">
-                <a href="{_gurl}" class="google-btn" target="_self">
-                    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    Continue with Google
-                </a>
-            </div>
-            <div class="auth-divider">or use your account</div>
-            """, unsafe_allow_html=True)
-        else:
-            # Show a placeholder Google button that explains setup
-            st.markdown("""
-            <div style="margin-bottom:0.3rem">
-                <div class="google-btn" style="opacity:0.5;cursor:not-allowed" title="Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables to enable">
-                    <svg class="google-icon" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                    Google Sign-In (configure env vars to enable)
-                </div>
-            </div>
-            <div class="auth-divider">or use your account below</div>
-            """, unsafe_allow_html=True)
+            <div style="background:{bg};color:{col2};border-radius:8px;
+                        padding:0.6rem 0.9rem;font-size:0.82rem;
+                        margin-bottom:1rem;text-align:center">
+                {_safe_html(amsg)}
+            </div>""", unsafe_allow_html=True)
 
-        tab_login, tab_reg = st.tabs(["🔑  Sign In", "✏️  Create Account"])
+        # Tabs: Sign In / Create Account
+        tab_login, tab_reg = st.tabs(["Sign In", "Create Account"])
 
-        # ── SIGN IN ──
         with tab_login:
-            st.markdown("")
-            li_id = st.text_input("Username or Email",
-                                  placeholder="yourname  or  you@gmail.com", key="li_id")
-            li_pw = st.text_input("Password", type="password",
-                                  placeholder="Your password", key="li_pw")
-            st.markdown("")
-            if st.button("Sign In  →", use_container_width=True,
-                         type="primary", key="do_login"):
+            st.markdown('<div style="height:0.6rem"></div>', unsafe_allow_html=True)
+            li_id = st.text_input("Username or Email", placeholder="username or email", key="li_id")
+            li_pw = st.text_input("Password", type="password", placeholder="password", key="li_pw")
+            st.markdown('<div style="height:0.4rem"></div>', unsafe_allow_html=True)
+            if st.button("Sign In", use_container_width=True, type="primary", key="do_login"):
                 if not li_id or not li_pw:
                     st.session_state._auth_msg = ("Please fill in all fields.", False)
                 else:
@@ -1187,44 +1206,70 @@ if not st.session_state.user:
                     if ok:
                         _tok = secrets.token_urlsafe(32)
                         save_session_token(_tok, udata["username"])
-                        st.session_state.user = udata
-                        st.session_state._sess_token = _tok
-                        st.session_state._auth_msg = ("", False)
-                        st.session_state.phase = "setup"
-                        st.query_params["_st"] = _tok
+                        st.session_state.user         = udata
+                        st.session_state._sess_token  = _tok
+                        st.session_state._auth_msg    = ("", False)
+                        st.session_state.phase        = "setup"
+                        st.query_params["_st"]        = _tok
+                        # Save to localStorage too
+                        st.markdown(f"""<script>try{{localStorage.setItem('mhtcet_session','{_tok}');}}catch(e){{}}</script>""", unsafe_allow_html=True)
                     else:
                         st.session_state._auth_msg = (err, False)
                 st.rerun()
-            st.markdown('<div class="auth-hint">🔒 Your scores and history are private to your account.</div>',
-                        unsafe_allow_html=True)
 
-        # ── CREATE ACCOUNT ──
+            # Google sign-in — only if configured, shown as a simple text link
+            if google_oauth_configured():
+                _gurl = google_auth_url(secrets.token_urlsafe(16))
+                st.markdown(f"""
+                <div style="text-align:center;margin-top:1rem">
+                    <a href="{_gurl}" target="_self"
+                       style="color:#818cf8;font-size:0.8rem;text-decoration:none;
+                              padding:0.5rem 1rem;border:1px solid rgba(99,102,241,0.3);
+                              border-radius:8px;display:inline-block;
+                              transition:all 0.15s ease">
+                        Continue with Google
+                    </a>
+                </div>""", unsafe_allow_html=True)
+
         with tab_reg:
-            st.markdown("")
-            rg_un  = st.text_input("Username",
-                                   placeholder="e.g. rahul_123  (letters, numbers, _ -)", key="rg_un")
-            rg_em  = st.text_input("Gmail / Email",
-                                   placeholder="you@gmail.com", key="rg_em")
-            rg_p1  = st.text_input("Password",         type="password",
-                                   placeholder="Min 6 characters", key="rg_p1")
-            rg_p2  = st.text_input("Confirm Password", type="password",
-                                   placeholder="Re-enter password",  key="rg_p2")
-            st.markdown("")
-            if st.button("Create Account  →", use_container_width=True,
-                         type="primary", key="do_register"):
+            st.markdown('<div style="height:0.6rem"></div>', unsafe_allow_html=True)
+            rg_un = st.text_input("Username", placeholder="e.g. rahul_123", key="rg_un")
+            rg_em = st.text_input("Email", placeholder="you@gmail.com", key="rg_em")
+            rg_p1 = st.text_input("Password", type="password", placeholder="min 6 characters", key="rg_p1")
+            rg_p2 = st.text_input("Confirm Password", type="password", placeholder="re-enter password", key="rg_p2")
+            st.markdown('<div style="height:0.4rem"></div>', unsafe_allow_html=True)
+            if st.button("Create Account", use_container_width=True, type="primary", key="do_register"):
                 if not all([rg_un, rg_em, rg_p1, rg_p2]):
                     st.session_state._auth_msg = ("Please fill in all fields.", False)
                 elif rg_p1 != rg_p2:
                     st.session_state._auth_msg = ("Passwords do not match.", False)
                 else:
                     ok, msg = auth_register(rg_un, rg_em, rg_p1)
-                    st.session_state._auth_msg = (msg, ok)
+                    if ok:
+                        # Auto-login after registration
+                        ok2, udata, err2 = auth_login(rg_un, rg_p1)
+                        if ok2:
+                            _tok = secrets.token_urlsafe(32)
+                            save_session_token(_tok, udata["username"])
+                            st.session_state.user        = udata
+                            st.session_state._sess_token = _tok
+                            st.session_state._auth_msg   = ("", False)
+                            st.session_state.phase       = "setup"
+                            st.query_params["_st"]       = _tok
+                            st.markdown(f"""<script>try{{localStorage.setItem('mhtcet_session','{_tok}');}}catch(e){{}}</script>""", unsafe_allow_html=True)
+                            st.rerun()
+                        else:
+                            st.session_state._auth_msg = (msg + " Please sign in.", True)
+                    else:
+                        st.session_state._auth_msg = (msg, False)
                 st.rerun()
-            st.markdown('<div class="auth-hint">✨ Each account has its own private history & analytics.</div>',
-                        unsafe_allow_html=True)
-        st.markdown("")
 
-    st.stop()   # ← don't render the rest of the app until logged in
+        st.markdown("""
+        <div style="text-align:center;margin-top:2rem;font-size:0.68rem;color:#6b6b8a">
+            Your data is private · Scores saved permanently
+        </div>""", unsafe_allow_html=True)
+
+    st.stop()
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  STATE
@@ -1288,15 +1333,21 @@ def safe(t):
     return html_lib.escape(str(t)) if t else ""
 
 def strip_html(t):
-    """Remove ALL HTML tags and decode entities — fixes questions showing raw HTML code."""
+    """Aggressively remove ALL HTML — fixes questions showing raw code."""
     if not t: return ""
     t = str(t)
-    # Remove HTML tags
-    t = _re.sub(r'<[^>]+>', ' ', t)
-    # Decode common entities
-    t = t.replace('&amp;','&').replace('&lt;','<').replace('&gt;','>').replace('&nbsp;',' ').replace('&#39;',"'").replace('&quot;','"')
-    # Remove extra whitespace
-    t = _re.sub(r'[ \t]+', ' ', t).strip()
+    # Remove full HTML blocks that sometimes come before question text
+    # e.g. </div></div><p class="q-text">actual question</p>
+    # First: if there's a <p ...> tag, extract just its text content
+    pm = _re.search(r'<p[^>]*>(.*?)</p>', t, _re.DOTALL | _re.IGNORECASE)
+    if pm:
+        t = pm.group(1)
+    # Remove ALL remaining HTML tags
+    t = _re.sub(r'<[^>]+>', '', t)
+    # Decode HTML entities
+    t = t.replace('&amp;','&').replace('&lt;','<').replace('&gt;','>')          .replace('&nbsp;',' ').replace('&#39;',"'").replace('&quot;','"')          .replace('&apos;',"'").replace('&laquo;','«').replace('&raquo;','»')
+    # Clean whitespace
+    t = _re.sub(r'[ 	]+', ' ', t).strip()
     t = _re.sub(r'\n{3,}', '\n\n', t)
     return t
 
@@ -1521,8 +1572,9 @@ def _generate_ai_batch(chapters_info, n, difficulty, used_hashes, target_diff_ov
         f"  Easy: Direct formula recall, single-step calculation, basic definition\n"
         f"  Medium: 2-step calculation, application of 1-2 concepts, moderate reasoning\n"
         f"  Hard: Multi-step derivation (3+ steps), combination of 2+ concepts, real exam trap options\n\n"
-        f"PLAIN TEXT RULES:\n"
-        f"1. NO LaTeX, NO HTML, NO backslashes. Write math as plain text: sqrt(3), x^2, pi/4\n"
+        f"PLAIN TEXT RULES (CRITICAL - violations cause display errors):\n"
+        f"1. ABSOLUTELY NO HTML TAGS. No <div>, <p>, <span>, <br>, no angle brackets in output EVER.\n"
+        f"2. NO LaTeX, NO backslashes. Write math as plain text: sqrt(3), x^2, pi/4\n"
         f"2. Chemical formulas: H2O, CH4, C2H5OH (subscripts as numbers after symbol)\n"
         f"3. Fractions: write as 'a/b' or '(a+b)/(c+d)'\n"
         f"4. The 'correct' field MUST be the letter (A/B/C/D) of the correct answer\n"
@@ -1955,7 +2007,7 @@ elif st.session_state.phase == "loading":
             st.session_state.selected_chapters,
             st.session_state.num_questions,
             st.session_state.difficulty, ph)
-        st.session_state.questions  = qs
+        st.session_state.questions  = [clean_q(q) for q in qs]  # strip HTML from ALL questions
         st.session_state.verify_log = vlog
         st.session_state.start_time = time.time()
         st.session_state.phase      = "test"
